@@ -1,13 +1,15 @@
-let number = 1;
+let number = 9000;
 
-SPINE = [0, 0, 7, 0]
+BASE_WIDTH = 7;
+SPINE = [0, 0, BASE_WIDTH, 0];
+H_CENTER = BASE_WIDTH / 2;
 
 VERTICES = [
-  [0, -2, 2, -2], // 0
-  [0, 0,  0, -2], // 1
-  [2, 0, 2, -2],  // 2
-  [0, 0,  2, -2], // 3
-  [0, -2, 2,  0], // 4
+  [-3.5, -2, -1.5, -2], // 0
+  [-3.5,  0, -3.5, -2], // 1
+  [-1.5,  0, -1.5, -2], // 2
+  [-3.5,  0, -1.5, -2], // 3
+  [-3.5, -2, -1.5,  0], // 4
 ]
 
 SEGMENTS = [
@@ -24,7 +26,7 @@ SEGMENTS = [
 
 function setup() {
   createCanvas(600, 600);
-  frameRate(1);
+  frameRate(30);
   textSize(1);
   textStyle(BOLD)
   textAlign(CENTER, CENTER);
@@ -39,22 +41,23 @@ function digit(d, exp10) {
   if (! EXP10.includes(exp10)) {
         throw new Error('Exponent must be in [' + EXP10 + '], was ' + exp10);
   }
-  vSign = (exp10 === 1 || exp10 === 3) ? 1 : -1;
+  hSign = (exp10 < 2) ? 1 : -1;
+  vSign = (exp10 === 0 || exp10 === 2) ? 1 : -1;
   segments = SEGMENTS[d-1];
   for (let i = 0; i < segments.length; i++) {
     s = segments[i];
     v = VERTICES[s];
-    line(v[0],v[1]*vSign,v[2],v[3]*vSign);
+    line(v[0]*hSign+H_CENTER,v[1]*vSign,v[2]*hSign+H_CENTER,v[3]*vSign);
   }
 }
 
 function numeral(n) {
   line(SPINE[0],SPINE[1],SPINE[2],SPINE[3]);
-  for (let exp10 = 1; exp10 < 3; exp10++) {
-    let pow10 = 10 ** exp10;
-    let d = n % pow10;
-    console.log(n, exp10, pow10, d);
+  for (let exp10 = 0; exp10 < 4; exp10++) {
+    let d = n % 10;
+    console.log(n, exp10, d);
     if (d > 0) digit(d, exp10);
+    n = Math.floor(n/10);
   }
 
 }
@@ -65,9 +68,9 @@ function draw() {
   fill(200, 0, 0);
   strokeWeight(0.15);
   translate(40, 200);
-  scale(70);
+  scale(75);
   numeral(number);
   stroke(0);
-  text(number, 4, 3)
-  number++;
+  text(number, 3.5, 3)
+  if (number < 9999) number++;
 }
